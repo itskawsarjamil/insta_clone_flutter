@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:insta_clone/resources/auth_method.dart';
+import 'package:insta_clone/utils/utils.dart';
 import 'package:insta_clone/widgets/text_field_input.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -16,6 +21,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordeditingController =
       TextEditingController();
   final TextEditingController _bioeditingController = TextEditingController();
+  Uint8List? _img;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _usernameeditingController.dispose();
+    _emaileditingController.dispose();
+    _passwordeditingController.dispose();
+    _bioeditingController.dispose();
+  }
+
+  void userSignUp() async {
+    String res = await AuthMethod().signUpUser(
+      email: _emaileditingController.text,
+      bio: _bioeditingController.text,
+      file: _img!,
+      password: _passwordeditingController.text,
+      username: _usernameeditingController.text,
+    );
+  }
+
+  void imagePick() async {
+    Uint8List _im = await pickImage(ImageSource.gallery);
+
+    setState(() {
+      _img = _im;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,19 +68,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Container(),
                 flex: 1,
               ),
-              const Stack(
+              Stack(
                 children: [
                   CircleAvatar(
                     radius: 64,
-                    backgroundImage: NetworkImage(
-                      "https://wallpapers.com/images/high/cool-profile-picture-2we7xmn0737hqgtu.webp",
-                    ),
+                    backgroundImage: _img != null ? MemoryImage(_img!) : null,
+                    child: const Icon(Icons.person),
                   ),
                   Positioned(
                     right: 12,
                     bottom: 5,
-                    child: Icon(
-                      Icons.add_a_photo,
+                    child: GestureDetector(
+                      onTap: () {
+                        imagePick();
+                      },
+                      child: const Icon(
+                        Icons.add_a_photo,
+                      ),
                     ),
                   ),
                 ],
@@ -87,7 +125,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    userSignUp();
+                  },
                   child: const Padding(
                     padding: EdgeInsets.all(12.0),
                     child: Text("Sign Up"),
