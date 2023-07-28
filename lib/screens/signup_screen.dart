@@ -15,6 +15,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  bool _isLoading = false;
   final TextEditingController _usernameeditingController =
       TextEditingController();
   final TextEditingController _emaileditingController = TextEditingController();
@@ -33,6 +34,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void userSignUp() async {
+    setState(() {
+      _isLoading = true;
+    });
     String res = await AuthMethod().signUpUser(
       email: _emaileditingController.text,
       bio: _bioeditingController.text,
@@ -40,6 +44,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       password: _passwordeditingController.text,
       username: _usernameeditingController.text,
     );
+    setState(() {
+      _isLoading = false;
+    });
+    if (res != 'success') {
+      showSnakBar(res, context);
+    } else {}
   }
 
   void imagePick() async {
@@ -73,7 +83,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CircleAvatar(
                     radius: 64,
                     backgroundImage: _img != null ? MemoryImage(_img!) : null,
-                    child: const Icon(Icons.person),
+                    child: const Icon(
+                      Icons.person,
+                      size: 64,
+                    ),
                   ),
                   Positioned(
                     right: 12,
@@ -128,9 +141,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   onPressed: () {
                     userSignUp();
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text("Sign Up"),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: _isLoading==true
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Text("Sign Up"),
                   ),
                 ),
               ),
@@ -138,7 +155,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Container(),
                 flex: 3,
               ),
-              Row(
+              Row( 
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Already Have an account?"),
