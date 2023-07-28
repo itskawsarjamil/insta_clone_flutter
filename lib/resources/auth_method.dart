@@ -58,8 +58,24 @@ class AuthMethod {
     //   } else if (err.code == 'weak-password') {
     //     res = 'your password need to be strong';
     //   }
-    // } 
+    // }
     catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
+  Future<String> loginUser(
+      {required String email, required String password}) async {
+    String res = "Some error occured";
+    try {
+      if (email.isNotEmpty || password.isNotEmpty) {
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+      } else {
+        res = 'please provide valid info';
+      }
+    } catch (err) {
       res = err.toString();
     }
     return res;

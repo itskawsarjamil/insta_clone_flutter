@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:insta_clone/utils/colors.dart';
 import 'package:insta_clone/widgets/text_field_input.dart';
+import 'package:insta_clone/resources/auth_method.dart';
+import 'package:insta_clone/utils/utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,8 +22,18 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-
   }
+
+  void userLogin() async {
+    String res = await AuthMethod().loginUser(
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    if (res != 'success') {
+      showSnakBar(res, context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(),
               flex: 1,
             ),
-            
             TextFieldWidget(
               textEditingController: _emailController,
               textHint: "Enter Your Email",
@@ -62,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 24,
             ),
             GestureDetector(
-              onTap: (){},
+              onTap: userLogin,
               child: Container(
                 child: const Text('Log in'),
                 width: double.infinity,
@@ -91,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
                 GestureDetector(
-                  onTap: (){},
+                  onTap: () {},
                   child: Container(
                     child: const Text(
                       "Sign Up",
