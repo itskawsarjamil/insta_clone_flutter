@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  bool _isLoading = false;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -25,13 +25,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void userLogin() async {
+    setState(() {
+      _isLoading = true;
+    });
     String res = await AuthMethod().loginUser(
       email: _emailController.text,
       password: _passwordController.text,
     );
+    setState(() {
+      _isLoading = false;
+    });
     if (res != 'success') {
       showSnakBar(res, context);
-    }
+    } else {}
   }
 
   @override
@@ -39,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: 32,
         ),
         width: double.infinity,
@@ -75,7 +81,11 @@ class _LoginScreenState extends State<LoginScreen> {
             GestureDetector(
               onTap: userLogin,
               child: Container(
-                child: const Text('Log in'),
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : const Text('Log in'),
                 width: double.infinity,
                 alignment: Alignment.center,
                 padding: const EdgeInsets.symmetric(vertical: 12),
