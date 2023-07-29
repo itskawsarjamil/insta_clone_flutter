@@ -37,7 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     if (res != 'success') {
       showSnakBar(res, context);
-    } else {}
+    } else {
+    }
   }
 
   @override
