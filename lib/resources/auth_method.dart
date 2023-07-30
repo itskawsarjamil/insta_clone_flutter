@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 //
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,13 @@ final _firestore = FirebaseFirestore.instance;
 final _auth = FirebaseAuth.instance;
 
 class AuthMethod {
+  Future<model.User> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    return model.User.fromSnap(documentSnapshot);
+  }
+
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -26,7 +34,8 @@ class AuthMethod {
         UserCredential cred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
-        print(cred);
+        // print(cred);
+
         var imgLink = await StorageMethod()
             .uploadImageToStorage('profilePics', file, false);
 
